@@ -33,7 +33,7 @@ func main() {
 	// Variables
 	variables := map[string]interface{}{
 		"searchValue":   graphql.String(""),
-		"limit": graphql.Int(1),
+		"limit": graphql.Int(10),
 		"skip": graphql.Int(0),
 	}
 
@@ -44,15 +44,8 @@ func main() {
 		return
 	}
 
-	if err := os.Mkdir("results-png", os.ModePerm); err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	if err := os.Mkdir("results-jpg", os.ModePerm); err != nil {
-		fmt.Println(err)
-		return
-	}
+	os.Mkdir("results-png", os.ModePerm)
+	os.Mkdir("results-jpg", os.ModePerm)
 
 	// Create images
 	for i, job := range q.Jobs {
@@ -70,7 +63,7 @@ func main() {
 			fmt.Println("Cannot convert to jpg. Error:", err)
 			continue
 		}
-		time.Sleep(4 * time.Second)
+		time.Sleep(10 * time.Second)
 	}
 
 	// Login to instagram
@@ -95,6 +88,6 @@ func main() {
 			fmt.Println("Cannot upload. Error:", err)
 			continue
 		}
-		time.Sleep(4 * time.Second)
+		time.Sleep(10 * time.Second)
 	}
 }

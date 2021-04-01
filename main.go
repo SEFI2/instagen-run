@@ -48,8 +48,8 @@ func instaUploader() (int, error) {
 	// Variables
 	variables := map[string]interface{}{
 		"searchValue":   graphql.String(""),
-		"limit": graphql.Int(40),
-		"skip": graphql.Int(40),
+		"limit": graphql.Int(20),
+		"skip": graphql.Int(10),
 	}
 
 	fmt.Println("Make query...")
@@ -80,10 +80,10 @@ func instaUploader() (int, error) {
 	fmt.Println("Upload images")
 	fmt.Println(len(q.Jobs))
 	// Create images
-	for i := 0; i < len(q.Jobs); i += 5 {
+	for i := 0; i < len(q.Jobs); i += 10 {
 		var toBePublished []io.Reader
 
-		for j := i; j < len(q.Jobs) && j < i + 5; j ++ {
+		for j := i; j < len(q.Jobs) && j < i + 10; j ++ {
 			job := q.Jobs[j]
 			title := fmt.Sprintf("%s. %s. %s", string(job.Title), string(job.Location), string(job.Phone))
 			content := string(job.Description)
@@ -103,9 +103,8 @@ func instaUploader() (int, error) {
 
 			b := tgbotapi.FileBytes{Name: "image.jpg", Bytes: buf.Bytes()}
 			msg := tgbotapi.NewPhotoUpload(groupChanID, b)
-			msg.Caption = string(job.Title)
+			msg.Caption = fmt.Sprintf("%s, %s",string(job.Title), string(job.Phone))
 			_, err = bot.Send(msg)
-
 			toBePublished = append(toBePublished, buf)
 			time.Sleep(10 * time.Second)
 		}

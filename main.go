@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"github.com/SEFI2/instagen/utils"
-	"github.com/TheForgotten69/goinsta/v2"
 	"github.com/aws/aws-lambda-go/lambda"
 	_ "github.com/aws/aws-lambda-go/lambda"
 	"github.com/shurcooL/graphql"
@@ -27,7 +26,7 @@ var random = rand.New(seed)
 
 func instaUploader() (int, error) {
 	fmt.Println("Init client")
-	client := graphql.NewClient("http://www.tabyshmak.ru:8080/graphql", nil)
+	client := graphql.NewClient("https://ig9k368qhf.execute-api.eu-west-2.amazonaws.com/default/jobs-lambda", nil)
 	if client == nil {
 		fmt.Println("Client is null")
 		return 0, fmt.Errorf("client is null")
@@ -48,8 +47,8 @@ func instaUploader() (int, error) {
 	// Variables
 	variables := map[string]interface{}{
 		"searchValue":   graphql.String(""),
-		"limit": graphql.Int(20),
-		"skip": graphql.Int(10),
+		"limit": graphql.Int(22),
+		"skip": graphql.Int(0),
 	}
 
 	fmt.Println("Make query...")
@@ -59,15 +58,17 @@ func instaUploader() (int, error) {
 		fmt.Println(err)
 		return 0, err
 	}
-
+	/*
+	fmt.Println("Login to instagram")
 	// Login to instagram
 	insta := goinsta.New("tabyshmak.ru", "firdavs13")
 	if err := insta.Login(); err != nil {
 		log.Fatal(err)
 		return 0, err
 	}
-	defer insta.Logout()
+	defer insta.Logout()*/
 
+	fmt.Println("Login to telegram bot")
 	// Telegram group upload
 	var groupChanID int64 = -1001494836905
 	bot, err := tgbotapi.NewBotAPI("1721591920:AAH5pHPAENB4tWuFN60IjBGrmIpzgMt_YNM")
@@ -106,11 +107,11 @@ func instaUploader() (int, error) {
 			msg.Caption = fmt.Sprintf("%s, %s",string(job.Title), string(job.Phone))
 			_, err = bot.Send(msg)
 			toBePublished = append(toBePublished, buf)
-			time.Sleep(10 * time.Second)
+			time.Sleep(15 * time.Second)
 		}
 
 
-		caption := fmt.Sprintf("%s", "#работа #москва #жумуш #jumush #работамосква #жумушмосква #москважумуш #жердеш")
+		/*caption := fmt.Sprintf("%s", "#работа #москва #жумуш #jumush #работамосква #жумушмосква #москважумуш #жердеш")
 		_, err = insta.UploadAlbum(toBePublished, caption, 1, 1)
 		// _, err = insta.UploadPhoto(buf, caption, 1, 1)
 		if err != nil {
@@ -118,7 +119,7 @@ func instaUploader() (int, error) {
 			continue
 		}
 
-		time.Sleep(30 * time.Second)
+		time.Sleep(30 * time.Second)*/
 	}
 
 	return 0, nil
